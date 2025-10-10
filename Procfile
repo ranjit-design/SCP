@@ -1,1 +1,3 @@
-web: gunicorn college_management_system.wsgi
+web: gunicorn Smart_College_Portal.wsgi
+web: gunicorn Smart_College_Portal.wsgi
+
