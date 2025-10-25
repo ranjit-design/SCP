@@ -1,5 +1,5 @@
 """
-ASGI config for college_management_system project.
+ASGI config for Smart_College_Portal project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 

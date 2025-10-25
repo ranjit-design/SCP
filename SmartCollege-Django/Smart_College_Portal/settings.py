@@ -161,7 +161,7 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_ADDRESS') 
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 EMAIL_USE_TLS = True
-# DEFAULT_FROM_EMAIL = "School Management System <admin@admin.com>"
+# DEFAULT_FROM_EMAIL = "Smart College Portal <admin@admin.com>"
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
