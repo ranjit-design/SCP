@@ -19,7 +19,7 @@
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- Google Recaptcha     -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
 
     <style>
        body.login-page {
@@ -36,10 +36,64 @@
     border: 1px solid rgba(255, 255, 255, 0.18);
     padding: 0.6rem;
 }
+
+/* Make inner card fully transparent, keep glass border */
+.card {
+    background: transparent;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(31, 38, 135, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.login-card-body {
+    background: transparent;
+    border: none;
+}
+    /* Enhance input fields */
+    .form-control {
+        background: rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        color: #fff;
+    }
+    .form-control::placeholder { color: rgba(255, 255, 255, 0.8); }
+    .input-group-text {
+        background: transparent;
+        border: none;
+        color: #fff;
+    }
+
+    /* Stylish button */
+    .btn-success.btn-block {
+        background: linear-gradient(135deg, #34d058 0%, #4dd78b 100%);
+        border: none;
+        transition: background 0.3s ease;
+    }
+    .btn-success.btn-block:hover {
+        background: linear-gradient(135deg, #34d058 0%, #4dd78b 100%);
+    }
+
+    /* Logo color */
+    .login-logo a { color: rgba(255, 255, 255, 0.95); }
+
+    .campus-title {
+        margin: 5px 0 20px 0; /* closer to top, spacing below */
+        text-align: center;
+        font-size: 3.8rem;
+        font-weight: 800;
+        font-style: italic;
+        background: linear-gradient(135deg, #ff512f 0%, #dd2476 50%, #1e90ff 100%);
+        background-clip: text;          /* standard */
+        -webkit-background-clip: text;  /* Safari/iOS */
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 3px 10px rgba(0,0,0,0.4); filter: brightness(1.1) contrast(1.1);
+    }
     </style>
 </head>
 
 <body class="hold-transition login-page">
+    <h1 class="campus-title">Patan Multiple Campus</h1>
     <div class="login-box">
         <div class="login-logo ">
             <a href=""><b> Smart College Portal</b> </a>
@@ -78,10 +132,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="input-group mb-3">
+                    <!-- <div class="input-group mb-3">
                         <div class="g-recaptcha" data-sitekey="6LfswtgZAAAAAJ7bhwqZZtDpBsc75ekH6FWA4Fnt"></div>
 
-                    </div>
+                    </div> -->
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
