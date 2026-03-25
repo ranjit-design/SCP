@@ -166,8 +166,8 @@ class StudentEditForm(CustomUserForm):
         super(StudentEditForm, self).__init__(*args, **kwargs)
 
     class Meta(CustomUserForm.Meta):
-        model = Student
-        fields = CustomUserForm.Meta.fields 
+        model = CustomUser
+        fields = CustomUserForm.Meta.fields + ['course', 'session']
 
 
 class StaffEditForm(CustomUserForm):
@@ -175,8 +175,8 @@ class StaffEditForm(CustomUserForm):
         super(StaffEditForm, self).__init__(*args, **kwargs)
 
     class Meta(CustomUserForm.Meta):
-        model = Staff
-        fields = CustomUserForm.Meta.fields
+        model = CustomUser
+        fields = CustomUserForm.Meta.fields + ['course']
 
 
 class EditResultForm(FormSettings):
