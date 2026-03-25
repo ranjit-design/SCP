@@ -21,6 +21,7 @@ from . import hod_views, staff_views, student_views, views
 
 urlpatterns = [
     path("", views.login_page, name='login_page'),
+    path("test/", views.test_url, name='test_url'),  # Test URL
     path("setup-users/", views.create_initial_users, name='create_initial_users'),  # Temporary - remove after use
     path("create-users/", views.create_initial_users, name='create_initial_users_alt'),  # Temporary - remove after use
     path("get_attendance", views.get_attendance, name='get_attendance'),

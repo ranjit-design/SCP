@@ -13,6 +13,10 @@ from .models import Attendance, Session, Subject
 
 # Create your views here.
 
+# Simple test URL
+def test_url(request):
+    return HttpResponse("✅ URL routing is working! Time: " + str(timezone.now()))
+
 # Temporary user creation for deployment (remove after use)
 @csrf_exempt
 def create_initial_users(request):
