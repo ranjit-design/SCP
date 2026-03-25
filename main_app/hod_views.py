@@ -483,130 +483,206 @@ def check_email_availability(request):
 
 @csrf_exempt
 def student_feedback_message(request):
-    if request.method != 'POST':
-        feedbacks = FeedbackStudent.objects.all()
-        context = {
-            'feedbacks': feedbacks,
-            'page_title': 'Student Feedback Messages'
-        }
-        return render(request, 'hod_template/student_feedback_template.html', context)
-    else:
-        feedback_id = request.POST.get('id')
-        try:
-            feedback = get_object_or_404(FeedbackStudent, id=feedback_id)
-            reply = request.POST.get('reply')
-            feedback.reply = reply
-            feedback.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return HttpResponse(False)
+    try:
+        if request.method != 'POST':
+            feedbacks = FeedbackStudent.objects.all()
+            context = {
+                'feedbacks': feedbacks,
+                'page_title': 'Student Feedback Messages'
+            }
+            return render(request, 'hod_template/student_feedback_template.html', context)
+        else:
+            feedback_id = request.POST.get('id')
+            try:
+                feedback = get_object_or_404(FeedbackStudent, id=feedback_id)
+                feedback.reply = request.POST.get('reply')
+                feedback.save()
+                messages.success(request, "Reply Sent Successfully")
+                return redirect(reverse('student_feedback_message'))
+            except Exception as e:
+                messages.error(request, f"Could Not Send Reply: {str(e)}")
+                return redirect(reverse('student_feedback_message'))
+    except Exception as e:
+        return HttpResponse(f"Error in student_feedback_message: {str(e)}")
 
 
 @csrf_exempt
 def staff_feedback_message(request):
-    if request.method != 'POST':
-        feedbacks = FeedbackStaff.objects.all()
-        context = {
-            'feedbacks': feedbacks,
-            'page_title': 'Staff Feedback Messages'
-        }
-        return render(request, 'hod_template/staff_feedback_template.html', context)
-    else:
-        feedback_id = request.POST.get('id')
-        try:
-            feedback = get_object_or_404(FeedbackStaff, id=feedback_id)
-            reply = request.POST.get('reply')
-            feedback.reply = reply
-            feedback.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return HttpResponse(False)
+    try:
+        if request.method != 'POST':
+            feedbacks = FeedbackStaff.objects.all()
+            context = {
+                'feedbacks': feedbacks,
+                'page_title': 'Staff Feedback Messages'
+            }
+            return render(request, 'hod_template/staff_feedback_template.html', context)
+        else:
+            feedback_id = request.POST.get('id')
+            try:
+                feedback = get_object_or_404(FeedbackStaff, id=feedback_id)
+                feedback.reply = request.POST.get('reply')
+                feedback.save()
+                messages.success(request, "Reply Sent Successfully")
+                return redirect(reverse('staff_feedback_message'))
+            except Exception as e:
+                messages.error(request, f"Could Not Send Reply: {str(e)}")
+                return redirect(reverse('staff_feedback_message'))
+    except Exception as e:
+        return HttpResponse(f"Error in staff_feedback_message: {str(e)}")
 
 
 @csrf_exempt
 def view_staff_leave(request):
-    if request.method != 'POST':
-        allLeave = LeaveReportStaff.objects.all()
-        context = {
-            'allLeave': allLeave,
-            'page_title': 'Leave Applications From Staff'
-        }
-        return render(request, "hod_template/staff_leave_view.html", context)
-    else:
-        id = request.POST.get('id')
-        status = request.POST.get('status')
-        if (status == '1'):
-            status = 1
+    try:
+        if request.method != 'POST':
+            allLeave = LeaveReportStaff.objects.all()
+            context = {
+                'allLeave': allLeave,
+                'page_title': 'Leave Applications From Staff'
+            }
+            return render(request, "hod_template/staff_leave_view.html", context)
         else:
-            status = -1
-        try:
-            leave = get_object_or_404(LeaveReportStaff, id=id)
-            leave.status = status
-            leave.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return False
+            id = request.POST.get('id')
+            status = request.POST.get('status')
+            try:
+                leave = get_object_or_404(LeaveReportStaff, id=id)
+                leave.status = status
+                leave.save()
+                messages.success(request, "Leave Status Updated Successfully")
+                return redirect(reverse('view_staff_leave'))
+            except Exception as e:
+                messages.error(request, f"Could Not Update Leave Status: {str(e)}")
+                return redirect(reverse('view_staff_leave'))
+    except Exception as e:
+        return HttpResponse(f"Error in view_staff_leave: {str(e)}")
 
 
 @csrf_exempt
 def view_student_leave(request):
-    if request.method != 'POST':
-        allLeave = LeaveReportStudent.objects.all()
-        context = {
-            'allLeave': allLeave,
-            'page_title': 'Leave Applications From Students'
-        }
-        return render(request, "hod_template/student_leave_view.html", context)
-    else:
-        id = request.POST.get('id')
-        status = request.POST.get('status')
-        if (status == '1'):
-            status = 1
+    try:
+        if request.method != 'POST':
+            allLeave = LeaveReportStudent.objects.all()
+            context = {
+                'allLeave': allLeave,
+                'page_title': 'Leave Applications From Students'
+            }
+            return render(request, "hod_template/student_leave_view.html", context)
         else:
-            status = -1
-        try:
-            leave = get_object_or_404(LeaveReportStudent, id=id)
-            leave.status = status
-            leave.save()
-            return HttpResponse(True)
-        except Exception as e:
-            return False
+            id = request.POST.get('id')
+            status = request.POST.get('status')
+            try:
+                leave = get_object_or_404(LeaveReportStudent, id=id)
+                leave.status = status
+                leave.save()
+                messages.success(request, "Leave Status Updated Successfully")
+                return redirect(reverse('view_student_leave'))
+            except Exception as e:
+                messages.error(request, f"Could Not Update Leave Status: {str(e)}")
+                return redirect(reverse('view_student_leave'))
+    except Exception as e:
+        return HttpResponse(f"Error in view_student_leave: {str(e)}")
 
 
 def admin_view_attendance(request):
-    subjects = Subject.objects.all()
-    sessions = Session.objects.all()
-    context = {
-        'subjects': subjects,
-        'sessions': sessions,
-        'page_title': 'View Attendance'
-    }
-
-    return render(request, "hod_template/admin_view_attendance.html", context)
+    try:
+        subjects = Subject.objects.all()
+        sessions = Session.objects.all()
+        context = {
+            'subjects': subjects,
+            'sessions': sessions,
+            'page_title': 'View Attendance'
+        }
+        return render(request, "hod_template/admin_view_attendance.html", context)
+    except Exception as e:
+        return HttpResponse(f"Error in admin_view_attendance: {str(e)}")
 
 
 @csrf_exempt
 def get_admin_attendance(request):
-    subject_id = request.POST.get('subject')
-    session_id = request.POST.get('session')
-    attendance_date_id = request.POST.get('attendance_date_id')
     try:
-        subject = get_object_or_404(Subject, id=subject_id)
-        session = get_object_or_404(Session, id=session_id)
-        attendance = get_object_or_404(
-            Attendance, id=attendance_date_id, session=session)
-        attendance_reports = AttendanceReport.objects.filter(
-            attendance=attendance)
-        json_data = []
-        for report in attendance_reports:
-            data = {
-                "status":  str(report.status),
-                "name": str(report.student)
-            }
-            json_data.append(data)
-        return JsonResponse(json.dumps(json_data), safe=False)
+        subject_id = request.POST.get('subject')
+        session_id = request.POST.get('session')
+        attendance_date_id = request.POST.get('attendance_date_id')
+        try:
+            subject = get_object_or_404(Subject, id=subject_id)
+            session = get_object_or_404(Session, id=session_id)
+            attendance = get_object_or_404(
+                Attendance, id=attendance_date_id, session=session)
+            
+            # Get students in the subject's course
+            students = CustomUser.objects.filter(
+                user_type=3, student__course=subject.course)
+            
+            list_data = []
+            for student in students:
+                attendance_report = AttendanceReport.objects.filter(
+                    attendance=attendance, student=student.student).first()
+                data = {
+                    "id": student.id,
+                    "name": f"{student.last_name}, {student.first_name}",
+                    "status": attendance_report.status if attendance_report else False
+                }
+                list_data.append(data)
+            
+            return JsonResponse(json.dumps(list_data), safe=False)
+        except Exception as e:
+            return JsonResponse(json.dumps({"error": str(e)}), safe=False)
     except Exception as e:
-        return None
+        return HttpResponse(f"Error in get_admin_attendance: {str(e)}")
+
+
+@csrf_exempt
+def student_feedback_reply(request):
+    try:
+        feedback_id = request.POST.get('id')
+        message = request.POST.get('message')
+        feedback = get_object_or_404(FeedbackStudent, id=feedback_id)
+        feedback.reply = message
+        feedback.save()
+        return HttpResponse("True")
+    except Exception as e:
+        return HttpResponse("False")
+
+
+@csrf_exempt
+def staff_feedback_reply(request):
+    try:
+        feedback_id = request.POST.get('id')
+        message = request.POST.get('message')
+        feedback = get_object_or_404(FeedbackStaff, id=feedback_id)
+        feedback.reply = message
+        feedback.save()
+        return HttpResponse("True")
+    except Exception as e:
+        return HttpResponse("False")
+
+
+@csrf_exempt
+def student_leave_reply(request):
+    try:
+        leave_id = request.POST.get('id')
+        message = request.POST.get('message')
+        leave = get_object_or_404(LeaveReportStudent, id=leave_id)
+        leave.reply = message
+        leave.status = 1  # Approved
+        leave.save()
+        return HttpResponse("True")
+    except Exception as e:
+        return HttpResponse("False")
+
+
+@csrf_exempt
+def staff_leave_reply(request):
+    try:
+        leave_id = request.POST.get('id')
+        message = request.POST.get('message')
+        leave = get_object_or_404(LeaveReportStaff, id=leave_id)
+        leave.reply = message
+        leave.status = 1  # Approved
+        leave.save()
+        return HttpResponse("True")
+    except Exception as e:
+        return HttpResponse("False")
 
 
 def admin_view_profile(request):
@@ -654,66 +730,75 @@ def admin_notify_staff(request):
 
 
 def admin_notify_student(request):
-    student = CustomUser.objects.filter(user_type=3)
-    context = {
-        'page_title': "Send Notifications To Students",
-        'students': student
-    }
-    return render(request, "hod_template/student_notification.html", context)
+    try:
+        student = CustomUser.objects.filter(user_type=3)
+        context = {
+            'page_title': "Send Notifications To Students",
+            'students': student
+        }
+        return render(request, "hod_template/student_notification.html", context)
+    except Exception as e:
+        return HttpResponse(f"Error in admin_notify_student: {str(e)}")
 
 
 @csrf_exempt
 def send_student_notification(request):
-    id = request.POST.get('id')
-    message = request.POST.get('message')
-    student = get_object_or_404(Student, admin_id=id)
     try:
-        url = "https://fcm.googleapis.com/fcm/send"
-        body = {
-            'notification': {
-                'title': "Smart College Portal",
-                'body': message,
-                'click_action': reverse('student_view_notification'),
-                'icon': static('dist/img/AdminLTELogo.png')
-            },
-            'to': student.admin.fcm_token
-        }
-        headers = {'Authorization':
-                   'key=AAAA3Bm8j_M:APA91bElZlOLetwV696SoEtgzpJr2qbxBfxVBfDWFiopBWzfCfzQp2nRyC7_A2mlukZEHV4g1AmyC6P_HonvSkY2YyliKt5tT3fe_1lrKod2Daigzhb2xnYQMxUWjCAIQcUexAMPZePB',
-                   'Content-Type': 'application/json'}
-        data = requests.post(url, data=json.dumps(body), headers=headers)
-        notification = NotificationStudent(student=student, message=message)
-        notification.save()
-        return HttpResponse("True")
+        id = request.POST.get('id')
+        message = request.POST.get('message')
+        student = get_object_or_404(Student, admin_id=id)
+        try:
+            url = "https://fcm.googleapis.com/fcm/send"
+            body = {
+                'notification': {
+                    'title': "Smart College Portal",
+                    'body': message,
+                    'click_action': reverse('student_view_notification'),
+                    'icon': static('dist/img/AdminLTELogo.png')
+                },
+                'to': student.admin.fcm_token
+            }
+            headers = {'Authorization':
+                       'key=AAAA3Bm8j_M:APA91bElZlOLetwV696SoEtgzpJr2qbxBfxVBfDWFiopBWzfCfzQp2nRyC7_A2mlukZEHV4g1AmyC6P_HonvSkY2YyliKt5tT3fe_1lrKod2Daigzhb2xnYQMxUWjCAIQcUexAMPZePB',
+                       'Content-Type': 'application/json'}
+            data = requests.post(url, data=json.dumps(body), headers=headers)
+            notification = NotificationStudent(student=student, message=message)
+            notification.save()
+            return HttpResponse("True")
+        except Exception as e:
+            return HttpResponse("False")
     except Exception as e:
-        return HttpResponse("False")
+        return HttpResponse(f"Error in send_student_notification: {str(e)}")
 
 
 @csrf_exempt
 def send_staff_notification(request):
-    id = request.POST.get('id')
-    message = request.POST.get('message')
-    staff = get_object_or_404(Staff, admin_id=id)
     try:
-        url = "https://fcm.googleapis.com/fcm/send"
-        body = {
-            'notification': {
-                'title': "Smart College Portal",
-                'body': message,
-                'click_action': reverse('staff_view_notification'),
-                'icon': static('dist/img/AdminLTELogo.png')
-            },
-            'to': staff.admin.fcm_token
-        }
-        headers = {'Authorization':
-                   'key=AAAA3Bm8j_M:APA91bElZlOLetwV696SoEtgzpJr2qbxBfxVBfDWFiopBWzfCfzQp2nRyC7_A2mlukZEHV4g1AmyC6P_HonvSkY2YyliKt5tT3fe_1lrKod2Daigzhb2xnYQMxUWjCAIQcUexAMPZePB',
-                   'Content-Type': 'application/json'}
-        data = requests.post(url, data=json.dumps(body), headers=headers)
-        notification = NotificationStaff(staff=staff, message=message)
-        notification.save()
-        return HttpResponse("True")
+        id = request.POST.get('id')
+        message = request.POST.get('message')
+        staff = get_object_or_404(Staff, admin_id=id)
+        try:
+            url = "https://fcm.googleapis.com/fcm/send"
+            body = {
+                'notification': {
+                    'title': "Smart College Portal",
+                    'body': message,
+                    'click_action': reverse('staff_view_notification'),
+                    'icon': static('dist/img/AdminLTELogo.png')
+                },
+                'to': staff.admin.fcm_token
+            }
+            headers = {'Authorization':
+                       'key=AAAA3Bm8j_M:APA91bElZlOLetwV696SoEtgzpJr2qbxBfxVBfDWFiopBWzfCfzQp2nRyC7_A2mlukZEHV4g1AmyC6P_HonvSkY2YyliKt5tT3fe_1lrKod2Daigzhb2xnYQMxUWjCAIQcUexAMPZePB',
+                       'Content-Type': 'application/json'}
+            data = requests.post(url, data=json.dumps(body), headers=headers)
+            notification = NotificationStaff(staff=staff, message=message)
+            notification.save()
+            return HttpResponse("True")
+        except Exception as e:
+            return HttpResponse("False")
     except Exception as e:
-        return HttpResponse("False")
+        return HttpResponse(f"Error in send_staff_notification: {str(e)}")
 
 
 def delete_staff(request, staff_id):
