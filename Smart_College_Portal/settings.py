@@ -97,16 +97,24 @@ WSGI_APPLICATION = 'Smart_College_Portal.wsgi.application'
 
 # Database configuration
 # For PostgreSQL (recommended for production)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'smart_college_portal'),
-        'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'ran123#'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
+# Use DATABASE_URL from Render (automatically provided)
+if os.environ.get('DATABASE_URL'):
+    # Use Render's DATABASE_URL
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
-}
+else:
+    # Fallback for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'smart_college_portal'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'ran123#'),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+        }
+    }
 RECAPTCHA_SITE_KEY = os.environ.get('RECAPTCHA_SITE_KEY', '6Lezjf0rAAAAAIxNzrLYmNt1yYDllSWagY8quZB8')
 RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '6Lezjf0rAAAAAB8QPKtQkvIVIX9ziC913iNrUsXH')
 
@@ -197,19 +205,5 @@ EMAIL_USE_TLS = True
 # DEFAULT_FROM_EMAIL = "Smart College Portal <admin@admin.com>"
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-if os.environ.get('DATABASE_URL'):
-    _database_url = os.environ.get('DATABASE_URL')
-    _scheme = _database_url.split(':', 1)[0].lower() if _database_url else ''
-    _ssl_require = _scheme in {'postgres', 'postgresql', 'postgis', 'mysql'}
-    prod_db = dj_database_url.config(conn_max_age=500, ssl_require=_ssl_require)
-    if prod_db.get('ENGINE') == 'django.db.backends.sqlite3':
-        options = prod_db.get('OPTIONS')
-        if isinstance(options, dict):
-            options.pop('sslmode', None)
-            if not options:
-                prod_db.pop('OPTIONS', None)
-    DATABASES['default'].update(prod_db)
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
