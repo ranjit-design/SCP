@@ -121,37 +121,49 @@ def add_staff(request):
 
 
 def add_student(request):
-    student_form = StudentForm(request.POST or None, request.FILES or None)
-    context = {'form': student_form, 'page_title': 'Add Student'}
-    if request.method == 'POST':
-        if student_form.is_valid():
-            first_name = student_form.cleaned_data.get('first_name')
-            last_name = student_form.cleaned_data.get('last_name')
-            address = student_form.cleaned_data.get('address')
-            email = student_form.cleaned_data.get('email')
-            gender = student_form.cleaned_data.get('gender')
-            password = student_form.cleaned_data.get('password')
-            course = student_form.cleaned_data.get('course')
-            session = student_form.cleaned_data.get('session')
-            passport = request.FILES['profile_pic']
-            fs = FileSystemStorage()
-            filename = fs.save(passport.name, passport)
-            passport_url = fs.url(filename)
-            try:
-                user = CustomUser.objects.create_user(
-                    email=email, password=password, user_type=3, first_name=first_name, last_name=last_name, profile_pic=passport_url)
-                user.gender = gender
-                user.address = address
-                user.student.session = session
-                user.student.course = course
-                user.save()
-                messages.success(request, "Successfully Added")
-                return redirect(reverse('add_student'))
-            except Exception as e:
-                messages.error(request, "Could Not Add: " + str(e))
-        else:
-            messages.error(request, "Could Not Add: ")
-    return render(request, 'hod_template/add_student_template.html', context)
+    try:
+        student_form = StudentForm(request.POST or None, request.FILES or None)
+        context = {'form': student_form, 'page_title': 'Add Student'}
+        if request.method == 'POST':
+            if student_form.is_valid():
+                first_name = student_form.cleaned_data.get('first_name')
+                last_name = student_form.cleaned_data.get('last_name')
+                address = student_form.cleaned_data.get('address')
+                email = student_form.cleaned_data.get('email')
+                gender = student_form.cleaned_data.get('gender')
+                password = student_form.cleaned_data.get('password')
+                course = student_form.cleaned_data.get('course')
+                session = student_form.cleaned_data.get('session')
+                
+                # Handle file upload with better error handling
+                passport_url = ''
+                if 'profile_pic' in request.FILES:
+                    passport = request.FILES['profile_pic']
+                    fs = FileSystemStorage()
+                    try:
+                        filename = fs.save(passport.name, passport)
+                        passport_url = fs.url(filename)
+                    except Exception as file_error:
+                        messages.error(request, f"File upload failed: {str(file_error)}")
+                        return render(request, 'hod_template/add_student_template.html', context)
+                
+                try:
+                    user = CustomUser.objects.create_user(
+                        email=email, password=password, user_type=3, first_name=first_name, last_name=last_name, profile_pic=passport_url)
+                    user.gender = gender
+                    user.address = address
+                    user.student.session = session
+                    user.student.course = course
+                    user.save()
+                    messages.success(request, "Successfully Added")
+                    return redirect(reverse('add_student'))
+                except Exception as e:
+                    messages.error(request, "Could Not Add: " + str(e))
+            else:
+                messages.error(request, "Form is not valid: " + str(student_form.errors))
+        return render(request, 'hod_template/add_student_template.html', context)
+    except Exception as e:
+        return HttpResponse(f"Error in add_student: {str(e)}")
 
 
 def add_course(request):
@@ -205,21 +217,27 @@ def add_subject(request):
 
 
 def manage_staff(request):
-    allStaff = CustomUser.objects.filter(user_type=2)
-    context = {
-        'allStaff': allStaff,
-        'page_title': 'Manage Staff'
-    }
-    return render(request, "hod_template/manage_staff.html", context)
+    try:
+        allStaff = CustomUser.objects.filter(user_type=2)
+        context = {
+            'allStaff': allStaff,
+            'page_title': 'Manage Staff'
+        }
+        return render(request, "hod_template/manage_staff.html", context)
+    except Exception as e:
+        return HttpResponse(f"Error in manage_staff: {str(e)}")
 
 
 def manage_student(request):
-    students = CustomUser.objects.filter(user_type=3)
-    context = {
-        'students': students,
-        'page_title': 'Manage Students'
-    }
-    return render(request, "hod_template/manage_student.html", context)
+    try:
+        students = CustomUser.objects.filter(user_type=3)
+        context = {
+            'students': students,
+            'page_title': 'Manage Students'
+        }
+        return render(request, "hod_template/manage_student.html", context)
+    except Exception as e:
+        return HttpResponse(f"Error in manage_student: {str(e)}")
 
 
 def manage_course(request):
