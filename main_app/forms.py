@@ -57,13 +57,15 @@ class CustomUserForm(FormSettings):
 
 
 class StudentForm(CustomUserForm):
+    course = forms.ModelChoiceField(queryset=Course.objects.all(), required=True)
+    session = forms.ModelChoiceField(queryset=Session.objects.all(), required=True)
+    
     def __init__(self, *args, **kwargs):
         super(StudentForm, self).__init__(*args, **kwargs)
 
     class Meta(CustomUserForm.Meta):
-        model = Student
-        fields = CustomUserForm.Meta.fields + \
-            ['course', 'session']
+        model = CustomUser
+        fields = CustomUserForm.Meta.fields
 
 
 class AdminForm(CustomUserForm):
@@ -71,18 +73,19 @@ class AdminForm(CustomUserForm):
         super(AdminForm, self).__init__(*args, **kwargs)
 
     class Meta(CustomUserForm.Meta):
-        model = Admin
+        model = CustomUser
         fields = CustomUserForm.Meta.fields
 
 
 class StaffForm(CustomUserForm):
+    course = forms.ModelChoiceField(queryset=Course.objects.all(), required=True)
+    
     def __init__(self, *args, **kwargs):
         super(StaffForm, self).__init__(*args, **kwargs)
 
     class Meta(CustomUserForm.Meta):
-        model = Staff
-        fields = CustomUserForm.Meta.fields + \
-            ['course' ]
+        model = CustomUser
+        fields = CustomUserForm.Meta.fields
 
 
 class CourseForm(FormSettings):
