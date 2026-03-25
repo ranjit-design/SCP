@@ -86,6 +86,16 @@ urlpatterns = [
          hod_views.edit_course, name='edit_course'),
     path("subject/edit/<int:subject_id>",
          hod_views.edit_subject, name='edit_subject'),
+    
+    # HOD Feedback and Leave Reply URLs
+    path("student/feedback/reply/", hod_views.student_feedback_reply,
+         name="student_feedback_reply"),
+    path("staff/feedback/reply/", hod_views.staff_feedback_reply,
+         name="staff_feedback_reply"),
+    path("student/leave/reply/", hod_views.student_leave_reply,
+         name="student_leave_reply"),
+    path("staff/leave/reply/", hod_views.staff_leave_reply,
+         name="staff_leave_reply"),
 
 
     # Staff
