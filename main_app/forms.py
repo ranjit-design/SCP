@@ -162,21 +162,41 @@ class FeedbackStudentForm(FormSettings):
 
 
 class StudentEditForm(CustomUserForm):
+    course = forms.ModelChoiceField(queryset=Course.objects.all(), required=True)
+    session = forms.ModelChoiceField(queryset=Session.objects.all(), required=True)
+    
     def __init__(self, *args, **kwargs):
         super(StudentEditForm, self).__init__(*args, **kwargs)
+        if kwargs.get('instance'):
+            instance = kwargs.get('instance')
+            # Set initial values for course and session from the related Student model
+            try:
+                self.fields['course'].initial = instance.student.course
+                self.fields['session'].initial = instance.student.session
+            except:
+                pass
 
     class Meta(CustomUserForm.Meta):
         model = CustomUser
-        fields = CustomUserForm.Meta.fields + ['course', 'session']
+        fields = CustomUserForm.Meta.fields
 
 
 class StaffEditForm(CustomUserForm):
+    course = forms.ModelChoiceField(queryset=Course.objects.all(), required=True)
+    
     def __init__(self, *args, **kwargs):
         super(StaffEditForm, self).__init__(*args, **kwargs)
+        if kwargs.get('instance'):
+            instance = kwargs.get('instance')
+            # Set initial value for course from the related Staff model
+            try:
+                self.fields['course'].initial = instance.staff.course
+            except:
+                pass
 
     class Meta(CustomUserForm.Meta):
         model = CustomUser
-        fields = CustomUserForm.Meta.fields + ['course']
+        fields = CustomUserForm.Meta.fields
 
 
 class EditResultForm(FormSettings):
