@@ -7,123 +7,159 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{{page_title}}</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <table id="example2" class="table table-bordered table-hover">
-                            <thead class="thead-dark">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Full Name</th>
-                                    <th>Email</th>
-                                    <th>Gender</th>
-                                    <th>Course</th>
-                                    <th>Avatar</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for student in students %}
-                                <tr>
-                                    <td>{{ forloop.counter }}</td>
-                                    <td>{{student.last_name}}, {{student.first_name}}</td>
-                                    <td>{{student.email}}</td>
-                                    <td>{{student.gender}}</td>
-                                    <td>{{student.student.course.name}}</td>
-                                    <td>
-                                        {% if student.profile_pic == ""  %}
-                                        No Image
-                                        {% else %}
-                                        <img class="img img-fluid mb-2" height="56" width="56"
-                                            src="{{student.profile_pic}}" alt="">
-                                        {% endif %}
-                                    </td>
-                                    <td><button data-toggle = "modal" data-target = "#myModal"class="btn btn-primary show_notification" value="{{student.id}}">Send Notification</button> 
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <!-- Desktop view -->
+                        <div class="d-none d-lg-block">
+                            <table id="example2" class="table table-bordered table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Gender</th>
+                                        <th>Course</th>
+                                        <th>Avatar</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for student in students %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{student.last_name}}, {{student.first_name}}</td>
+                                        <td>{{student.email}}</td>
+                                        <td>{{student.gender}}</td>
+                                        <td>{{student.student.course.name}}</td>
+                                        <td>
+                                            {% if student.profile_pic == ""  %}
+                                            No Image
+                                            {% else %}
+                                            <img class="img img-fluid mb-2" height="56" width="56"
+                                                src="{{student.profile_pic}}" alt="">
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm show_notification" value="{{student.id}}">
+                                                <i class="fas fa-bell"></i> Send Notification
+                                            </button> 
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Mobile view -->
+                        <div class="d-lg-none">
+                            {% for student in students %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-3 text-center">
+                                            {% if student.profile_pic == ""  %}
+                                            <div class="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                                <i class="fas fa-user fa-2x"></i>
+                                            </div>
+                                            {% else %}
+                                            <img src="{{student.profile_pic}}" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;" alt="">
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-9">
+                                            <h6 class="mb-1">{{student.last_name}}, {{student.first_name}}</h6>
+                                            <p class="mb-1 text-muted small">{{student.email}}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <span class="badge badge-info">{{student.gender}}</span>
+                                                    <span class="badge badge-secondary ml-1">{{student.student.course.name}}</span>
+                                                </div>
+                                                <button data-toggle="modal" data-target="#myModal" class="btn btn-primary btn-sm show_notification" value="{{student.id}}">
+                                                    <i class="fas fa-bell"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </section>
-<div class = "modal fade" id = "myModal" tabindex = "-1" role = "dialog" 
-   aria-labelledby = "myModalLabel" aria-hidden = "true">
-   
-   <div class = "modal-dialog">
-      <div class = "modal-content">
-         
-         <div class = "modal-header">Send Notification
-            <button type = "button" class = "close" data-dismiss = "modal" aria-hidden = "true">
-                  &times;
-            </button>
-            
-           
-         </div>
-         
-         <div class = "modal-body">
-            <div class="form-group">
-                <input type="text" id="message" class='form-control'>
-                <input type="hidden"  id="student_id" class='form-control'>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Send Notification</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-         </div>
-         
-         <div class = "modal-footer">
-            <button type = "button" class = "btn btn-danger" data-dismiss = "modal">
-               Close
-            </button>
-            
-            <button type = "button" id='send' class = "btn btn-success send_notification">
-               Send Notification
-            </button>
-         </div>
-         
-      </div><!-- /.modal-content -->
-   </div><!-- /.modal-dialog -->
-  
-</div><!-- /.modal -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea type="text" id="message" class="form-control" rows="3" placeholder="Enter your notification message..."></textarea>
+                    <input type="hidden" id="student_id" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Close
+                </button>
+                <button type="button" id="send" class="btn btn-success send_notification">
+                    <i class="fas fa-paper-plane"></i> Send Notification
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
+
 {% block custom_js %}
-  <script>
-      $(".show_notification").click(function(){
-          $("#student_id").val($(this).val())
-      })
-      $(".send_notification").click(function(){
-          var id = $("#student_id").val()
-          var message = $("#message").val()
-          sendNotification(id,message);
-      })
-    function sendNotification(id,message){
+<script>
+    $(".show_notification").click(function(){
+        $("#student_id").val($(this).val())
+        $("#message").val('').focus();
+    })
+    
+    $(".send_notification").click(function(){
+        var id = $("#student_id").val()
+        var message = $("#message").val()
+        if (message.trim() === '') {
+            alert("Please enter a notification message");
+            return;
+        }
+        sendNotification(id, message);
+    })
+    
+    function sendNotification(id, message){
         $.ajax({
             url: "{% url 'send_student_notification' %}",
             type: 'POST',
             data: {
                 id: id,
-                message:message
+                message: message
             }
         }).done(function (response) {
-           
-                
             if (response == 'True'){
                 alert("Notification Sent");
                 location.reload();
-              }else{
+            } else {
                 alert("Notification could not be saved. Please try again.");
-              }
-               
-           
+            }
         }).fail(function (response) {
-            alert("Error in saving token")
+            alert("Error in saving notification")
         })
-
     }
-
-  </script>
+</script>
 {% endblock custom_js %}
