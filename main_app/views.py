@@ -4,11 +4,63 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 
 from .EmailBackend import EmailBackend
 from .models import Attendance, Session, Subject
 
 # Create your views here.
+
+# Temporary user creation for deployment (remove after use)
+def create_initial_users(request):
+    """Create initial users - remove this after deployment"""
+    from main_app.models import CustomUser
+    
+    users_created = []
+    
+    # Create Admin user
+    if not CustomUser.objects.filter(email='admin@scp.com').exists():
+        admin = CustomUser.objects.create_user(
+            email='admin@scp.com',
+            password='admin123',
+            user_type='1',
+            first_name='System',
+            last_name='Administrator'
+        )
+        users_created.append("Admin: admin@scp.com / admin123")
+    
+    # Create Staff user
+    if not CustomUser.objects.filter(email='staff@scp.com').exists():
+        staff = CustomUser.objects.create_user(
+            email='staff@scp.com',
+            password='staff123',
+            user_type='2',
+            first_name='Staff',
+            last_name='User'
+        )
+        users_created.append("Staff: staff@scp.com / staff123")
+    
+    # Create Student user
+    if not CustomUser.objects.filter(email='student@scp.com').exists():
+        student = CustomUser.objects.create_user(
+            email='student@scp.com',
+            password='student123',
+            user_type='3',
+            first_name='Student',
+            last_name='User'
+        )
+        users_created.append("Student: student@scp.com / student123")
+    
+    return HttpResponse(f"""
+    <h2>✅ Users Created Successfully!</h2>
+    <p>Use these credentials to login:</p>
+    <ul>
+        {"".join([f"<li>{user}</li>" for user in users_created])}
+    </ul>
+    <p><a href="/">Go to Login</a></p>
+    <p><strong>Important: Remove this URL after use!</strong></p>
+    """)
 
 
 def login_page(request):
