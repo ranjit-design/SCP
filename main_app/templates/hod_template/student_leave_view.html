@@ -7,7 +7,7 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-12">
                 <!-- general form elements -->
                 <div class="card card-dark">
                     <div class="card-header">
@@ -15,41 +15,151 @@
                     </div>
 
                     <div class="table card-body">
-                        <table class="table table-bordered table-hover">
-                            <tr>
-                                <th>#</th>
-                                <th>Student</th>
-                                <th>Course</th>
-                                <th>Message</th>
-                                <th>Leave Date</th>
-                                <th>Submitted On</th>
-                                <th>Action</th>
+                        <!-- Desktop view -->
+                        <div class="d-none d-lg-block">
+                            <table class="table table-bordered table-hover">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Message</th>
+                                    <th>Leave Date</th>
+                                    <th>Submitted On</th>
+                                    <th>Action</th>
+                                </tr>
+                                {% for leave in allLeave %}
+                                <tr>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>{{leave.student}}</td>
+                                    <td>{{leave.student.course}}</td>
+                                    <td>{{leave.message}}</td>
+                                    <td>{{leave.date}}</td>
+                                    <td>{{leave.created_at}}</td>
+                                    <td>
+                                        {% if leave.status == 0 %}
+                                        <button data-toggle="modal" data-target="#reply_modal" value="{{leave.id}}" class="btn btn-success btn-sm reply_open_modal">
+                                            <i class="fas fa-reply"></i> Reply
+                                        </button>
+                                        {% elif leave.status == -1 %}
+                                        <span class='badge badge-danger'>Rejected</span>
+                                        {% else %}
+                                        <span class='badge badge-success'>Approved</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
 
-                            </tr>
-                            {% for leave in  allLeave %}
-                              <tr>
-                                  <td>{{forloop.counter}}</td>
-                                  <td>{{leave.student}}</td>
-                                  <td>{{leave.student.course}}</td>
-                                  <td>{{leave.message}}</td>
-                                  <td>{{leave.date}}</td>
-                                  <td>{{leave.created_at}}</td>
-                                 
-                                      
-                                      {% if leave.status == 0 %}
-                                           <td> <button data-toggle = "modal" data-target = "#reply_modal" value="{{leave.id}}" class="btn btn-success reply_open_modal">Reply</button>
-{% elif leave.status == -1 %}
-<td><span  class='badge badge-danger'>Rejected</span></td>
-{% else %}
-<td><span  class='badge badge-success'>Approved</span></td>
-
-                                            <td>{{feedback.updated_at}}</td>
-                                      {% endif %}
-                                          
-                                  </td>
-                       
-                              </tr>
+                        <!-- Mobile view -->
+                        <div class="d-lg-none">
+                            {% for leave in allLeave %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="mb-0">{{leave.student}}</h6>
+                                        {% if leave.status == 0 %}
+                                        <span class='badge badge-warning'>Pending</span>
+                                        {% elif leave.status == -1 %}
+                                        <span class='badge badge-danger'>Rejected</span>
+                                        {% else %}
+                                        <span class='badge badge-success'>Approved</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <p class="text-muted small mb-2">
+                                        <i class="fas fa-book"></i> {{leave.student.course}} | 
+                                        <i class="fas fa-calendar"></i> {{leave.date}}
+                                    </p>
+                                    
+                                    <p class="mb-2">{{leave.message}}</p>
+                                    
+                                    <p class="text-muted small mb-2">
+                                        <i class="fas fa-clock"></i> Submitted: {{leave.created_at}}
+                                    </p>
+                                    
+                                    {% if leave.status == 0 %}
+                                    <button data-toggle="modal" data-target="#reply_modal" value="{{leave.id}}" class="btn btn-success btn-sm reply_open_modal">
+                                        <i class="fas fa-reply"></i> Reply
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
                             {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reply Modal -->
+<div class="modal fade" id="reply_modal" tabindex="-1" role="dialog" aria-labelledby="reply_modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reply_modalLabel">Reply to Leave Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="reply_message" class="form-label">Your Reply</label>
+                    <textarea id="reply_message" class="form-control" rows="4" placeholder="Enter your reply..."></textarea>
+                    <input type="hidden" id="leave_id" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-success" id="reply_button">
+                    <i class="fas fa-paper-plane"></i> Send Reply
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block custom_js %}
+<script>
+    $(".reply_open_modal").click(function(){
+        $("#leave_id").val($(this).val())
+        $("#reply_message").val('').focus();
+    })
+
+    $("#reply_button").click(function(){
+        var id=$("#leave_id").val()
+        var message=$("#reply_message").val()
+        if (message.trim() === '') {
+            alert("Please enter a reply message");
+            return;
+        }
+        replyLeave(id,message)
+    })
+
+    function replyLeave(id,message){
+        $.ajax({
+            url:"{% url 'student_leave_reply' %}",
+            type:'POST',
+            data:{id:id,message:message}
+        }).done(function(response){
+            if(response=="True"){
+                alert("Reply Sent")
+                location.reload()
+            }
+            else{
+                alert("Error in Sending Reply")
+            }
+        }).fail(function(){
+            alert("Error in Sending Reply")
+        })
+    }
+</script>
+{% endblock custom_js %}
                         </table>
                     </div>
                     </div>
