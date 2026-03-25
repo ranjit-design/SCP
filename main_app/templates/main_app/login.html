@@ -18,99 +18,299 @@
     <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    <!-- Google Recaptcha     -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
     <style>
        body.login-page {
-    background: url("{% static 'images/ptn.png' %}") no-repeat center center fixed;
-    background-size: cover;
+    background: transparent;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    margin: 0;
 }
 
-.login-box {
-    background: rgba(255, 255, 255, 0.25); /* White with 25% opacity */
+.auth-shell {
+    width: 100%;
+    max-width: 1200px;
+    min-height: 640px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.auth-left {
+    padding: 60px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-right {
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    z-index: 1;
+}
+
+.auth-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    max-width: 420px;
+    margin: auto;
     border-radius: 16px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(10px); /* More blur = more watery */
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    padding: 0.6rem;
+}
+
+.auth-card .card {
+    border: 0;
+    border-radius: 16px;
+    margin-bottom: 0;
+    box-shadow: none;
+}
+
+.auth-card .card-body {
+    padding: 40px 35px;
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.login-logo a {
+    color: #1f2937;
+    font-size: 24px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-card .form-control {
+    border-radius: 10px;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    background: rgba(249, 250, 251, 0.85);
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.auth-card .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background: #fff;
+}
+
+.auth-card .input-group-text {
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    background: rgba(249, 250, 251, 0.85);
+    color: #6b7280;
+}
+
+.auth-card .btn-success {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.2s ease;
+}
+
+.auth-card .btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.35);
+}
+
+.auth-card .btn-success:active {
+    transform: translateY(0);
+}
+
+.auth-card .icheck-primary label {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.auth-card .mb-1 a {
+    color: #667eea;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.auth-card .mb-1 a:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+.auth-card .alert-danger {
+    border-radius: 10px;
+    border: none;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 12px 16px;
+    font-size: 14px;
+}
+
+@media (max-width: 992px) {
+    .auth-shell {
+        grid-template-columns: 1fr;
+        min-height: auto;
+        max-width: 100%;
+    }
+    .auth-left {
+        padding: 24px 16px;
+        order: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    .auth-right {
+        min-height: 280px;
+        padding: 16px;
+        order: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .auth-image {
+        max-height: none;
+        height: auto;
+        max-width: 100%;
+    }
+    .auth-card {
+        width: 100%;
+        max-width: 360px;
+    }
+    .auth-card .card-body {
+        padding: 32px 24px;
+    }
+    .login-logo {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+    .login-logo a {
+        font-size: 20px;
+    }
+    .auth-card .btn-success {
+        padding: 8px 20px;
+        font-size: 14px;
+        line-height: 1.2;
+        white-space: nowrap;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .auth-card .form-control {
+        font-size: 16px;
+        padding: 12px 16px;
+    }
+    .auth-card .input-group-text {
+        font-size: 16px;
+    }
+    .auth-card .icheck-primary label {
+        font-size: 13px;
+    }
+    .auth-card .mb-1 a {
+        font-size: 13px;
+    }
+    .auth-card .alert-danger {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
 }
     </style>
 </head>
 
 <body class="hold-transition login-page">
-    <div class="login-box">
-        <div class="login-logo ">
-            <a href=""><b> Smart College Portal</b> </a>
-
-        </div>
-        <!-- /.login-logo -->
-        <div class="card">
-            <div class="card-body login-card-body">
-                <!-- <p class="login-box-msg">Sign in to start your session</p> -->
-                {% if messages %}
-                <div class="col-12">
-                    {% for message in messages %}
-                    {% if message.tags == 'error' %}
-                    <div class="alert alert-danger text-center ">
-                        {{message }}
+    <div class="auth-shell">
+        <div class="auth-left">
+            <div class="auth-card">
+                <div class="card">
+                    <div class="card-body login-card-body">
+                        <div class="login-logo ">
+                            <a href=""><b> Smart College Portal</b> </a>
+                        </div>
+                        {% if messages %}
+                        <div class="col-12">
+                            {% for message in messages %}
+                            {% if message.tags == 'error' %}
+                            <div class="alert alert-danger text-center ">
+                                {{message }}
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <form action="doLogin/" method="post">
+                            {% csrf_token %}
+                            <div class="input-group mb-3">
+                                <input required type="email" name='email' class="form-control" placeholder="Email">
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-envelope"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input required type="password" name='password' class="form-control" placeholder="Password">
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <span class="fas fa-lock"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" id="remember">
+                                        <label for="remember">
+                                            Remember Me
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <button type="submit" class="btn btn-success btn-block">Log In</button>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="mb-1">
+                            <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                        </p>
                     </div>
-                    {% endif %}
-                    {% endfor %}
                 </div>
-                {% endif %}
-                <form action="doLogin/" method="post">
-                    {% csrf_token %}
-                    <div class="input-group mb-3">
-                        <input required type="email" name='email' class="form-control" placeholder="Email">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-envelope"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <input required type="password" name='password' class="form-control" placeholder="Password">
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="input-group mb-3">
-                        <div class="g-recaptcha" data-sitekey="6LfswtgZAAAAAJ7bhwqZZtDpBsc75ekH6FWA4Fnt"></div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-success btn-block">Log In</button>
-                        </div>
-
-
-                        <!-- /.col -->
-                    </div>
-                </form>
-
-
-                <p class="mb-1">
-                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
-                </p>
-
             </div>
-            <!-- /.login-card-body -->
+        </div>
+        <div class="auth-right">
+            <img src="{% static 'images/boss.png' %}" alt="" class="auth-image">
         </div>
     </div>
-    <!-- /.login-box -->
 
     <!-- jQuery -->
     <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>

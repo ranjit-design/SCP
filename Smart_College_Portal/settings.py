@@ -29,10 +29,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'f2zx8*lb*em*-*b+!&1lpp&$_9q9kmkar+l3x90do@s(+sr&x7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 # ALLOWED_HOSTS = ['smswithdjango.herokuapp.com']
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '.onrender.com,localhost,127.0.0.1').split(',')
 
 # Application definition
 
@@ -107,6 +107,8 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
+RECAPTCHA_SITE_KEY = os.environ.get('RECAPTCHA_SITE_KEY', '6Lezjf0rAAAAAIxNzrLYmNt1yYDllSWagY8quZB8')
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', '6Lezjf0rAAAAAB8QPKtQkvIVIX9ziC913iNrUsXH')
 
 # Fallback to SQLite for development if PostgreSQL is not available
 # Uncomment the following lines if you want to use SQLite instead
@@ -196,8 +198,18 @@ EMAIL_USE_TLS = True
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-prod_db = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(prod_db)
+if os.environ.get('DATABASE_URL'):
+    _database_url = os.environ.get('DATABASE_URL')
+    _scheme = _database_url.split(':', 1)[0].lower() if _database_url else ''
+    _ssl_require = _scheme in {'postgres', 'postgresql', 'postgis', 'mysql'}
+    prod_db = dj_database_url.config(conn_max_age=500, ssl_require=_ssl_require)
+    if prod_db.get('ENGINE') == 'django.db.backends.sqlite3':
+        options = prod_db.get('OPTIONS')
+        if isinstance(options, dict):
+            options.pop('sslmode', None)
+            if not options:
+                prod_db.pop('OPTIONS', None)
+    DATABASES['default'].update(prod_db)
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
