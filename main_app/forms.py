@@ -29,10 +29,12 @@ class CustomUserForm(FormSettings):
         super(CustomUserForm, self).__init__(*args, **kwargs)
 
         if kwargs.get('instance'):
-            instance = kwargs.get('instance').admin.__dict__
+            instance = kwargs.get('instance')
             self.fields['password'].required = False
+            # Set initial values directly from CustomUser instance
             for field in CustomUserForm.Meta.fields:
-                self.fields[field].initial = instance.get(field)
+                if hasattr(instance, field):
+                    self.fields[field].initial = getattr(instance, field)
             if self.instance.pk is not None:
                 self.fields['password'].widget.attrs['placeholder'] = "Fill this only if you wish to update password"
 
@@ -43,8 +45,7 @@ class CustomUserForm(FormSettings):
                 raise forms.ValidationError(
                     "The given email is already registered")
         else:  # Update
-            dbEmail = self.Meta.model.objects.get(
-                id=self.instance.pk).admin.email.lower()
+            dbEmail = self.instance.email.lower()
             if dbEmail != formEmail:  # There has been changes
                 if CustomUser.objects.filter(email=formEmail).exists():
                     raise forms.ValidationError("The given email is already registered")
@@ -174,9 +175,11 @@ class StudentEditForm(CustomUserForm):
             instance = kwargs.get('instance')
             # Set initial values for course and session from the related Student model
             try:
-                self.fields['course'].initial = instance.student.course
-                self.fields['session'].initial = instance.student.session
-            except:
+                if hasattr(instance, 'student') and instance.student:
+                    self.fields['course'].initial = instance.student.course
+                    self.fields['session'].initial = instance.student.session
+            except Exception as e:
+                # Don't let form initialization fail
                 pass
 
     class Meta(CustomUserForm.Meta):
@@ -193,8 +196,10 @@ class StaffEditForm(CustomUserForm):
             instance = kwargs.get('instance')
             # Set initial value for course from the related Staff model
             try:
-                self.fields['course'].initial = instance.staff.course
-            except:
+                if hasattr(instance, 'staff') and instance.staff:
+                    self.fields['course'].initial = instance.staff.course
+            except Exception as e:
+                # Don't let form initialization fail
                 pass
 
     class Meta(CustomUserForm.Meta):
