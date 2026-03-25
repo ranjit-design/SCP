@@ -17,6 +17,41 @@ from .models import Attendance, Session, Subject
 def test_url(request):
     return HttpResponse("✅ URL routing is working! Time: " + str(timezone.now()))
 
+# Temporary password change for admin
+@csrf_exempt
+def change_admin_password(request):
+    """Change admin password - remove this after use"""
+    from main_app.models import CustomUser
+    
+    if request.method == 'POST':
+        new_password = request.POST.get('password')
+        if new_password and len(new_password) >= 6:
+            try:
+                admin_user = CustomUser.objects.get(email='admin@scp.com')
+                admin_user.set_password(new_password)
+                admin_user.save()
+                return HttpResponse(f"""
+                <h2>✅ Admin Password Changed Successfully!</h2>
+                <p>New password for admin@scp.com has been set.</p>
+                <p><a href="/">Go to Login</a></p>
+                <p><strong>Remove this URL after use for security!</strong></p>
+                """)
+            except Exception as e:
+                return HttpResponse(f"Error: {str(e)}")
+        else:
+            return HttpResponse("Password must be at least 6 characters long.")
+    
+    return HttpResponse("""
+    <h2>Change Admin Password</h2>
+    <form method="post">
+        <label>New Password (min 6 chars):</label><br>
+        <input type="password" name="password" required minlength="6"><br><br>
+        <button type="submit">Change Password</button>
+    </form>
+    <p><a href="/">Cancel</a></p>
+    <p><strong>Remove this URL after use for security!</strong></p>
+    """)
+
 # Temporary user creation for deployment (remove after use)
 @csrf_exempt
 def create_initial_users(request):
