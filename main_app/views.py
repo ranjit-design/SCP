@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render, reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.utils import timezone
 
 from .EmailBackend import EmailBackend
 from .models import Attendance, Session, Subject
@@ -13,6 +14,7 @@ from .models import Attendance, Session, Subject
 # Create your views here.
 
 # Temporary user creation for deployment (remove after use)
+@csrf_exempt
 def create_initial_users(request):
     """Create initial users - remove this after deployment"""
     from main_app.models import CustomUser
@@ -29,6 +31,8 @@ def create_initial_users(request):
             last_name='Administrator'
         )
         users_created.append("Admin: admin@scp.com / admin123")
+    else:
+        users_created.append("Admin: admin@scp.com / admin123 (already exists)")
     
     # Create Staff user
     if not CustomUser.objects.filter(email='staff@scp.com').exists():
@@ -40,6 +44,8 @@ def create_initial_users(request):
             last_name='User'
         )
         users_created.append("Staff: staff@scp.com / staff123")
+    else:
+        users_created.append("Staff: staff@scp.com / staff123 (already exists)")
     
     # Create Student user
     if not CustomUser.objects.filter(email='student@scp.com').exists():
@@ -51,6 +57,8 @@ def create_initial_users(request):
             last_name='User'
         )
         users_created.append("Student: student@scp.com / student123")
+    else:
+        users_created.append("Student: student@scp.com / student123 (already exists)")
     
     return HttpResponse(f"""
     <h2>✅ Users Created Successfully!</h2>
@@ -58,8 +66,9 @@ def create_initial_users(request):
     <ul>
         {"".join([f"<li>{user}</li>" for user in users_created])}
     </ul>
-    <p><a href="/">Go to Login</a></p>
-    <p><strong>Important: Remove this URL after use!</strong></p>
+    <p><strong><a href="/">Go to Login Page</a></strong></p>
+    <p><strong>Important: Remove this URL after use for security!</strong></p>
+    <p>Time: {timezone.now()}</p>
     """)
 
 
